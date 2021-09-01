@@ -41,7 +41,7 @@ static GLuint shaderProgram;
 static struct timespec tm_spec;
 
 /*  model, view, and projection matrices */
-mat4_t model, view, proj;
+static mat4_t model, view, proj;
 
 extern GtkWidget *gl_area;
 
