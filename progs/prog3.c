@@ -36,6 +36,8 @@ static GLuint shaderProgram;
 void prog3_init(void)
 {
     printf("OpenGL version is %s\n", glGetString(GL_VERSION));
+    printf("GLSL version is %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    printf("OpenGL renderer is %s\n", glGetString(GL_RENDERER));
     printf("Demonstration of textures.\n");
 
    /* VAOs store links between attributes in a program and raw data.

@@ -79,6 +79,8 @@ extern GtkWidget *gl_area;
 void prog6_init(void)
 {
     printf("OpenGL version is %s\n", glGetString(GL_VERSION));
+    printf("GLSL version is %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    printf("OpenGL renderer is %s\n", glGetString(GL_RENDERER));
     printf("Demonstration of depth buffer and stencil buffer.\n");
 
     int win_width = gtk_widget_get_allocated_width(gl_area);

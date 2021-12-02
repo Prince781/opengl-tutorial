@@ -22,6 +22,8 @@ static struct timespec tm_spec;
 void prog1_init(void)
 {
     printf("OpenGL version is %s\n", glGetString(GL_VERSION));
+    printf("GLSL version is %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    printf("OpenGL renderer is %s\n", glGetString(GL_RENDERER));
 
     /* VAOs store links between attributes in a program and raw data.
      * This shuold come before any calls to glVertexAttribPointer */

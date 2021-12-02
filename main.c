@@ -58,7 +58,7 @@ static gboolean update_graphics(GtkWidget *widget,
 
 static void window_close(GtkWidget *widget)
 {
-    gtk_main_quit();
+    printf("should quit\n");
 }
 
 GtkWidget *create_glarea_window(void)
@@ -66,19 +66,19 @@ GtkWidget *create_glarea_window(void)
     GtkWidget *box;
     GtkWidget *window;
 
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    window = gtk_window_new();
     gtk_window_set_title(GTK_WINDOW(window), "OpenGL Tutorial");
     gtk_window_set_default_size(GTK_WINDOW(window), 600, 600);
     g_signal_connect(window, "destroy", G_CALLBACK(window_close), NULL);
 
     box = gtk_box_new(GTK_ORIENTATION_VERTICAL, FALSE);
     gtk_box_set_spacing(GTK_BOX(box), 6);
-    gtk_container_add(GTK_CONTAINER(window), box);
+    gtk_window_set_child(GTK_WINDOW(window), box);
 
     gl_area = gtk_gl_area_new();
     gtk_widget_set_hexpand(gl_area, TRUE);
     gtk_widget_set_vexpand(gl_area, TRUE);
-    gtk_container_add(GTK_CONTAINER(box), gl_area);
+    gtk_box_append(GTK_BOX(box), gl_area);
 
     /* gtk_gl_area_set_required_version(GTK_GL_AREA(gl_area), 3, 2); */
 
@@ -90,25 +90,39 @@ GtkWidget *create_glarea_window(void)
     return window;
 }
 
-int main(int argc, char **argv) {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <prog ID>"
-                "\n\twhere progID is between 0 and %d\n", argv[0], num_programs-1);
-        return 0;
-    }
+static int command_line (GApplication *self, GApplicationCommandLine *cmdline, void *data)
+{
+    int argc;
+    char **argv;
 
+    argv = g_application_command_line_get_arguments(cmdline, &argc);
     if ((progID = atoi(argv[1])) >= num_programs) {
         fprintf(stderr, "progID must be between 0 and %d\n", num_programs-1);
-        return 0;
+        fprintf(stderr, "Usage: %s <prog ID>"
+                "\n\twhere progID is between 0 and %d\n", argv[0], num_programs-1);
+        return 1;
     }
 
-    gtk_init(&argc, &argv);
-
-    demo_window = create_glarea_window();
-
-    gtk_widget_show_all(demo_window);
-
-    gtk_main();
+    g_application_activate(self);
     return 0;
+}
+
+static void activate(GtkApplication *app, void *data)
+{
+    if (!demo_window) {
+        demo_window = create_glarea_window();
+        gtk_application_add_window(app, GTK_WINDOW(demo_window));
+    }
+    gtk_window_present(GTK_WINDOW(demo_window));
+}
+
+int main(int argc, char **argv) {
+    GtkApplication *app;
+    gtk_init();
+
+    app = gtk_application_new("com.github.prince781.OpenGLTutorial", G_APPLICATION_HANDLES_COMMAND_LINE);
+    g_signal_connect(app, "command-line", G_CALLBACK(command_line), NULL);
+    g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
+    return g_application_run(G_APPLICATION(app), argc, argv);
 }
 
